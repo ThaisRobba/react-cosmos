@@ -24,7 +24,7 @@ export function ensureHtmlWebackPlugin(
 ): webpack.WebpackPluginInstance[] {
   if (hasPlugin(plugins, 'HtmlWebpackPlugin')) {
     return plugins.map(plugin =>
-      isHtmlWebpackPlugin(plugin) ? changeHtmlPluginFilename(plugin) : plugin
+      isHtmlWebpackPlugin(plugin) ? changeHtmlPluginFilename(rootDir, plugin) : plugin
     );
   }
 
@@ -55,7 +55,7 @@ function isHtmlWebpackPlugin(
   return isInstanceOfWebpackPlugin(plugin, 'HtmlWebpackPlugin');
 }
 
-function changeHtmlPluginFilename(htmlPlugin: HtmlWebpackPlugin) {
+function changeHtmlPluginFilename(rootDir: CosmosConfig["rootDir"], htmlPlugin: HtmlWebpackPlugin) {
   if (!isIndexHtmlWebpackPlugin(htmlPlugin)) return htmlPlugin;
 
   const options = htmlPlugin.userOptions || htmlPlugin.options;
@@ -63,6 +63,7 @@ function changeHtmlPluginFilename(htmlPlugin: HtmlWebpackPlugin) {
 
   return new htmlPlugin.constructor({
     ...safeOptions,
+    projectRoot: rootDir,
     filename: RENDERER_FILENAME,
   });
 }
